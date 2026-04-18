@@ -1,0 +1,15 @@
+.git
+.gitignore
+evidence/
+kind/
+kubernetes/
+scripts/
+README.md
+what-I-did.md
+
+Server/README.md
+Server/MuchToDo/.env
+Server/MuchToDo/docker-compose.yaml
+Server/MuchToDo/Makefile
+Server/MuchToDo/internal/**/*.test.go
+Server/MuchToDo/internal/**/*.test.go.cp
