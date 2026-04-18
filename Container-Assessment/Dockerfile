@@ -32,7 +32,8 @@ WORKDIR /app
 COPY --from=builder --chown=app:app /out/muchtodo /app/muchtodo
 COPY --chown=app:app docker-entrypoint.sh /app/docker-entrypoint.sh
 
-RUN chmod 755 /app/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /app/docker-entrypoint.sh && \
+    chmod 755 /app/docker-entrypoint.sh
 
 USER app
 
