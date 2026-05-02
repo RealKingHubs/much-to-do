@@ -1,10 +1,13 @@
+# Manages the deployment and scaling of the Go backend application
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
   namespace: muchtodo
 spec:
+  # Runs 2 copies (replicas) of the app for high availability and load balancing
   replicas: 2
+  # Defines how the deployment finds the Pods it is responsible for
   selector:
     matchLabels:
       app: backend
@@ -15,23 +18,28 @@ spec:
     spec:
       containers:
         - name: backend
+          # Uses the local image built previously
           image: muchtodo-backend:local
+          # Use local image if available; don't try to pull from a remote registry
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
               name: http
+          # Loads all configuration and secrets as environment variables
           envFrom:
             - configMapRef:
                 name: backend-configmap
             - secretRef:
                 name: backend-secret
+          # Resource Management: Prevents the app from consuming all cluster resources
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 100m     # Guaranteed CPU (0.1 cores)
+              memory: 128Mi # Guaranteed RAM
             limits:
-              cpu: 500m
-              memory: 256Mi
+              cpu: 500m     # Max CPU allowed (0.5 cores)
+              memory: 256Mi # Max RAM allowed
+          # Readiness Probe: Checks if the app is ready to handle user requests
           readinessProbe:
             httpGet:
               path: /health
@@ -39,6 +47,7 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
+          # Liveness Probe: Restarts the container if the application hangs or crashes
           livenessProbe:
             httpGet:
               path: /health

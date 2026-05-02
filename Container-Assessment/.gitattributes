@@ -1,4 +1,10 @@
+# Ensure shell scripts always use Linux-style line endings (LF), 
+# preventing "command not found" errors when running scripts in Docker or Linux.
 *.sh text eol=lf
+
+# Force the Dockerfile to use LF line endings to avoid build errors.
 Dockerfile text eol=lf
+
+# Ensure YAML configuration files use LF line endings for cross-platform consistency.
 *.yml text eol=lf
 *.yaml text eol=lf

@@ -1,11 +1,15 @@
+# Request for physical storage from the cluster to keep MongoDB data permanent
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongodb-pvc
+  # Ensures the storage is tied to the 'muchtodo' namespace
   namespace: muchtodo
 spec:
+  # 'ReadWriteOnce' means the volume can be mounted as read-write by a single node
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
+      # Allocates 1 Gigabyte of space for the database files
       storage: 1Gi

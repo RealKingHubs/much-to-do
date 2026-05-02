@@ -1,17 +1,23 @@
+# Ingress resource to manage external access to the services in the cluster
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: backend-ingress
+  # Ensures this ingress only applies to the 'muchtodo' namespace
   namespace: muchtodo
 spec:
+  # Tells the cluster to use the NGINX Ingress Controller to process this rule
   ingressClassName: nginx
   rules:
     - http:
         paths:
+          # Match all traffic starting with '/' (the root path)
           - path: /
             pathType: Prefix
             backend:
               service:
+                # Route the matching traffic to the internal service named 'backend'
                 name: backend
                 port:
+                  # Use port 80 of the backend service
                   number: 80

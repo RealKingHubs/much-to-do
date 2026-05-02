@@ -1,10 +1,13 @@
+# Manages the deployment of the MongoDB database instance
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongodb
   namespace: muchtodo
 spec:
+  # Runs a single instance of MongoDB
   replicas: 1
+  # Tells the deployment which Pods belong to it
   selector:
     matchLabels:
       app: mongodb
@@ -16,18 +19,22 @@ spec:
       containers:
         - name: mongodb
           image: mongo:8.0
+          # Only pull the image if it's not already present on the node (saves bandwidth)
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 27017
               name: mongodb
+          # Automatically injects all key-value pairs from the ConfigMap and Secret as environment variables
           envFrom:
             - configMapRef:
                 name: mongodb-configmap
             - secretRef:
                 name: mongodb-secret
+          # Attach the storage volume to the standard MongoDB data path
           volumeMounts:
             - name: mongodb-data
               mountPath: /data/db
+          # Readiness Probe: Checks if DB is ready to accept traffic
           readinessProbe:
             exec:
               command:
@@ -41,6 +48,7 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
+          # Liveness Probe: Checks if the DB container has crashed/frozen and needs a restart
           livenessProbe:
             exec:
               command:
@@ -55,6 +63,7 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 5
       volumes:
+        # Links the container volume to a PersistentVolumeClaim for permanent storage
         - name: mongodb-data
           persistentVolumeClaim:
             claimName: mongodb-pvc

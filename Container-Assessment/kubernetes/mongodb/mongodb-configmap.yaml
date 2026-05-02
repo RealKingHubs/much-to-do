@@ -1,7 +1,10 @@
+# A ConfigMap to store non-sensitive configuration settings
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mongodb-configmap
+  # Keeps this configuration inside the same 'muchtodo' namespace
   namespace: muchtodo
 data:
+  # The name of the initial database to be created in MongoDB
   MONGO_INITDB_DATABASE: much_todo_db

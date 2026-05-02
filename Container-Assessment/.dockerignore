@@ -1,5 +1,8 @@
+# Ignore Git metadata to keep the build context clean
 .git
 .gitignore
+
+# Ignore local documentation and evidence folders
 evidence/
 kind/
 kubernetes/
@@ -7,9 +10,16 @@ scripts/
 README.md
 what-I-did.md
 
+# Ignore nested project documentation
 Server/README.md
+
+# IMPORTANT: Ignore local environment files to prevent leaking secrets in the image
 Server/MuchToDo/.env
+
+# Ignore local orchestration and automation files not needed inside the container
 Server/MuchToDo/docker-compose.yaml
 Server/MuchToDo/Makefile
+
+# Ignore Go test files and temporary copies to keep the binary build lean
 Server/MuchToDo/internal/**/*.test.go
 Server/MuchToDo/internal/**/*.test.go.cp

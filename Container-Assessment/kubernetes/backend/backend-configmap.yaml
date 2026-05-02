@@ -1,12 +1,20 @@
+# Stores non-sensitive configuration settings for the Go backend application
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: backend-configmap
+  # Grouped within the 'muchtodo' namespace for consistency
   namespace: muchtodo
 data:
+  # The internal port the application will listen on
   PORT: "8080"
+  # The specific database name the application will target in MongoDB
   DB_NAME: much_todo_db
+  # Token validity duration for authentication
   JWT_EXPIRATION_HOURS: "72"
+  # Toggle for enabling/disabling the Redis caching layer
   ENABLE_CACHE: "false"
+  # Controls the verbosity of the application logs
   LOG_LEVEL: "INFO"
+  # Sets the output style of logs (json is great for structured logging in K8s)
   LOG_FORMAT: "json"

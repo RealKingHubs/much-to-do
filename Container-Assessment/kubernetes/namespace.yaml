@@ -1,4 +1,6 @@
+# Define a logical partition (Namespace) to organize all MuchToDo resources
 apiVersion: v1
 kind: Namespace
 metadata:
+  # All backend, database, and ingress resources will be grouped under this name
   name: muchtodo

@@ -1,14 +1,21 @@
+# Network service that exposes the backend Pods to the rest of the cluster and the host
 apiVersion: v1
 kind: Service
 metadata:
   name: backend
+  # Connects resources within the 'muchtodo' namespace
   namespace: muchtodo
 spec:
+  # Load balances traffic across all Pods labeled 'app: backend'
   selector:
     app: backend
   ports:
     - name: http
+      # The port accessible inside the cluster (used by the Ingress)
       port: 80
+      # The actual port the Go application is listening on inside the container
       targetPort: 8080
+      # The static port opened on every cluster node (matches your 'kind' config)
       nodePort: 30080
+  # 'NodePort' makes the service accessible from outside the cluster via the host IP:30080
   type: NodePort

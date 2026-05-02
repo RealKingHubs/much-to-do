@@ -1,18 +1,24 @@
+# Project name used to prefix containers, networks, and volumes
 name: muchtodo
 
 services:
+  # Database Service: MongoDB
   mongodb:
     image: mongo:8.0
     container_name: muchtodo-mongodb
     restart: unless-stopped
+    # Use environment variables from your local .env file for credentials
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
       MONGO_INITDB_DATABASE: "${DB_NAME}"
+    # Map the host port (from .env) to the standard MongoDB port inside the container
     ports:
       - "${MONGO_PORT}:27017"
+    # Persist database data so it isn't lost when the container stops
     volumes:
       - mongo-data:/data/db
+    # Ensure the DB is actually ready to accept connections before other services start
     healthcheck:
       test:
         [
@@ -26,6 +32,7 @@ services:
     networks:
       - muchtodo
 
+  # Application Service: Go Backend
   backend:
     build:
       context: .
@@ -33,9 +40,11 @@ services:
     image: muchtodo-backend:local
     container_name: muchtodo-backend
     restart: unless-stopped
+    # Only start the backend once the MongoDB healthcheck (above) passes
     depends_on:
       mongodb:
         condition: service_healthy
+    # Pass configuration variables into the container environment
     environment:
       PORT: "${PORT}"
       MONGO_URI: "${MONGO_URI}"
@@ -45,14 +54,17 @@ services:
       ENABLE_CACHE: "${ENABLE_CACHE}"
       LOG_LEVEL: "${LOG_LEVEL}"
       LOG_FORMAT: "${LOG_FORMAT}"
+    # Map the host port to the app's internal port (8080)
     ports:
       - "${APP_PORT}:8080"
     networks:
       - muchtodo
 
+# Named volume for permanent data storage
 volumes:
   mongo-data:
 
+# Internal network to allow services to talk to each other by name (e.g., http://mongodb:27017)
 networks:
   muchtodo:
     driver: bridge

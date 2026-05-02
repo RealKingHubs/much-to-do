@@ -1,13 +1,19 @@
+# Internal network abstraction that provides a stable IP for the database
 apiVersion: v1
 kind: Service
 metadata:
   name: mongodb
+  # Must be in the same namespace as the MongoDB Pods
   namespace: muchtodo
 spec:
+  # Routes traffic to any Pod labeled 'app: mongodb'
   selector:
     app: mongodb
   ports:
     - name: mongodb
+      # The port other services (like the backend) will use to connect
       port: 27017
+      # The actual port the MongoDB container is listening on
       targetPort: 27017
+  # 'ClusterIP' makes the service only reachable from within the cluster (secure)
   type: ClusterIP
