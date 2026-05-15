@@ -16,7 +16,7 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: dev-starttech-backend
+  ECR_REPOSITORY: 093796422475.dkr.ecr.us-east-1.amazonaws.com/dev-starttech-backend
   IMAGE_TAG: latest
 
 jobs:
