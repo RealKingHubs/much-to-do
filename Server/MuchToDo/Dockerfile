@@ -1,45 +1,54 @@
 # =========================
 # BUILD STAGE
 # =========================
-# Explicitly lock down the minor version for deterministic builds
+
 FROM golang:1.25.1-alpine AS builder
 
 WORKDIR /app
 
+# Install git (required for some Go module resolutions)
+RUN apk add --no-cache git
+
+# Copy dependency files first for layer caching
 COPY go.mod go.sum ./
 
+# Download dependencies
 RUN go mod download
 
+# Copy application source
 COPY . .
 
-# Added structural optimization flags (-ldflags="-w -s") to strip debug info and shrink binary size
-RUN CGO_ENABLED=0 GOOS=linux go build \
+# Build optimized static binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
   -ldflags="-w -s" \
   -o server ./cmd/api
 
 # =========================
 # RUNTIME STAGE
 # =========================
-# FIXED: Locked alpine to a stable version (3.20) for consistent vulnerability scans
+
 FROM alpine:3.20
 
+# Install runtime certificates
 RUN apk --no-cache add ca-certificates
 
-# FIXED: Create a non-root system user and group (Meets Phase 6 Least-Privilege requirement)
+# Create non-root user/group
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# FIXED: Swapped working directory from /root/ to the user's home space
+# Application directory
 WORKDIR /home/appuser
 
-# Copy the compiled binary over from the builder stage
+# Copy binary from builder
 COPY --from=builder /app/server .
 
-# FIXED: Securely pass folder and file execution ownership to your restricted user
+# Ensure correct ownership
 RUN chown -R appuser:appgroup /home/appuser
 
-# FIXED: Force container execution engine to run as the non-root user
+# Switch to least-privileged user
 USER appuser
 
+# Application port
 EXPOSE 8080
 
+# Start application
 CMD ["./server"]
