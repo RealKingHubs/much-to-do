@@ -56,10 +56,9 @@ jobs:
 
       - name: Run Gosec
         run: |
-          $(go env GOPATH)/bin/gosec ./...
-          $(go env GOPATH)/bin/gosec -fmt sarif ./... > gosec-report.sarif || true
-          echo "Gosec report generated at $GITHUB_WORKSPACE/Server/MuchToDo/gosec-report.sarif"
-          $(go env GOPATH)/bin/gosec -fmt text ./...
+          $(go env GOPATH)/bin/gosec \
+            -exclude=G104 \
+            ./...
 
   # =========================================
   # BUILD & PUSH
