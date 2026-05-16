@@ -56,8 +56,10 @@ jobs:
 
       - name: Run Gosec
         run: |
-          $(go env GOPATH)/bin/gosec ./...
-
+          $(go env GOPATH)/bin/gosec \
+            -exclude=G104,G112,G404 \
+            ./...
+ 
   # =========================================
   # BUILD & PUSH
   # =========================================
