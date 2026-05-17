@@ -2,11 +2,10 @@
 
 IMAGE=$1
 
-INSTANCE_IDS=$(aws ec2 describe-instances \
-  --filters "Name=tag:Name,Values=dev-backend*" \
-  --query "Reservations[*].Instances[*].InstanceId" \
-  --output text \
-  --region us-east-1)
+INSTANCE_IDS=$(aws ssm describe-instance-information \
+  --region us-east-1 \
+  --query "InstanceInformationList[*].InstanceId" \
+  --output text)
 
 aws ssm send-command \
   --instance-ids $INSTANCE_IDS \
