@@ -18,6 +18,7 @@ aws ssm send-command \
 
     "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 093796422475.dkr.ecr.us-east-1.amazonaws.com",
 
+    "docker system prune -af || true",
     "docker pull '"$IMAGE"'",
 
     "docker stop backend || true",
